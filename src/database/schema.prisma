@@ -1,0 +1,43 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         Int      @id @default(autoincrement())
+  chatId     Int      @unique
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  location   String?
+  latitude   Float?
+  longitude  Float?
+  settings   Settings?
+  histories  WeatherHistory[]
+}
+
+model Settings {
+  id          Int     @id @default(autoincrement())
+  showTemp    Boolean @default(true)
+  showWind    Boolean @default(true)
+  showClouds  Boolean @default(true)
+  showHumidity Boolean @default(true)
+  userId      Int     @unique
+  user        User    @relation(fields: [userId], references: [id])
+}
+
+model WeatherHistory {
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  user        User     @relation(fields: [userId], references: [id])
+  location    String
+  temp        Float
+  windSpeed   Float
+  clouds      Int
+  humidity    Int
+  description String
+  createdAt   DateTime @default(now())
+}
